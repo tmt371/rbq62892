@@ -149,14 +149,13 @@ export class F2SummaryView {
         this.f2.b19_disRbPrice.textContent = formatDecimalCurrency(f2State.disRbPrice);
         this.f2.b20_singleprofit.textContent = formatDecimalCurrency(f2State.singleprofit);
         this.f2.b21_rbProfit.textContent = formatDecimalCurrency(f2State.rbProfit);
-        this.f2.b22_sumprice.textContent = formatDecimalCurrency(f2State.sumPrice);
-        // [REMOVED] Rendering for b23_sumprofit removed
-        this.f2.b25_netprofit.textContent = formatDecimalCurrency(f2State.netProfit);
 
-        // [NEW] Render new elements with new values
+        // [MODIFIED] (Phase 8) Use the correct state keys defined in initial-state.js
+        this.f2.b22_sumprice.textContent = formatDecimalCurrency(f2State.sumPrice);
         this.f2.f2_17_pre_sum.textContent = formatDecimalCurrency(f2State.f2_17_pre_sum);
-        this.f2.b24_gst.textContent = formatDecimalCurrency(f2State.gst); // Now shows new_gst
+        this.f2.b24_gst.textContent = formatDecimalCurrency(f2State.gst);
         this.f2.grand_total.textContent = formatDecimalCurrency(f2State.grandTotal);
+        this.f2.b25_netprofit.textContent = formatDecimalCurrency(f2State.netProfit);
 
         // --- Render Inputs ---
         if (document.activeElement !== this.f2.b10_wifiQty) this.f2.b10_wifiQty.value = formatValue(f2State.wifiQty);
@@ -165,7 +164,8 @@ export class F2SummaryView {
         if (document.activeElement !== this.f2.b15_removalQty) this.f2.b15_removalQty.value = formatValue(f2State.removalQty);
         if (document.activeElement !== this.f2.b17_mulTimes) this.f2.b17_mulTimes.value = formatValue(f2State.mulTimes);
         if (document.activeElement !== this.f2.b18_discount) this.f2.b18_discount.value = formatValue(f2State.discount);
-        // [NEW] Render new_offer input
+
+        // [MODIFIED] (Phase 8) Render new_offer input using its correct state key
         if (document.activeElement !== this.f2.new_offer) this.f2.new_offer.value = formatValue(f2State.newOffer);
 
 
@@ -226,7 +226,25 @@ export class F2SummaryView {
         const { quoteData, ui } = this.stateService.getState();
         const summaryValues = this.calculationService.calculateF2Summary(quoteData, ui);
 
-        // [MODIFIED] (Phase 2) Dispatch new values to state
+        // [FIX] (Phase 8) Explicitly dispatch ALL values from calculation service
+        // to their corresponding state keys. This removes all ambiguity and
+        // fixes the logic error from previous edits.
+
+        // Old compatible values
+        this.stateService.dispatch(uiActions.setF2Value('totalSumForRbTime', summaryValues.totalSumForRbTime));
+        this.stateService.dispatch(uiActions.setF2Value('wifiSum', summaryValues.wifiSum));
+        this.stateService.dispatch(uiActions.setF2Value('deliveryFee', summaryValues.deliveryFee));
+        this.stateService.dispatch(uiActions.setF2Value('installFee', summaryValues.installFee));
+        this.stateService.dispatch(uiActions.setF2Value('removalFee', summaryValues.removalFee));
+        this.stateService.dispatch(uiActions.setF2Value('acceSum', summaryValues.acceSum));
+        this.stateService.dispatch(uiActions.setF2Value('eAcceSum', summaryValues.eAcceSum));
+        this.stateService.dispatch(uiActions.setF2Value('firstRbPrice', summaryValues.firstRbPrice));
+        this.stateService.dispatch(uiActions.setF2Value('disRbPrice', summaryValues.disRbPrice));
+        this.stateService.dispatch(uiActions.setF2Value('rbProfit', summaryValues.rbProfit));
+        this.stateService.dispatch(uiActions.setF2Value('singleprofit', summaryValues.singleprofit));
+        this.stateService.dispatch(uiActions.setF2Value('mulTimes', summaryValues.mulTimes));
+
+        // New (Phase 2+) values
         this.stateService.dispatch(uiActions.setF2Value('f2_17_pre_sum', summaryValues.f2_17_pre_sum));
         this.stateService.dispatch(uiActions.setF2Value('sumPrice', summaryValues.sumPrice));
         this.stateService.dispatch(uiActions.setF2Value('newOffer', summaryValues.newOffer));
@@ -234,14 +252,6 @@ export class F2SummaryView {
         this.stateService.dispatch(uiActions.setF2Value('grandTotal', summaryValues.grandTotal));
         this.stateService.dispatch(uiActions.setF2Value('netProfit', summaryValues.netProfit));
 
-        // [MODIFIED] (Phase 7) Add 'gst' and 'netProfit' to the exclusion list
-        const exclusionList = ['f2_17_pre_sum', 'sumPrice', 'newOffer', 'new_gst', 'grandTotal', 'netProfit', 'gst', 'netProfit'];
-
-        // Dispatch remaining (old + compatible) values
-        for (const key in summaryValues) {
-            if (!exclusionList.includes(key)) {
-                this.stateService.dispatch(uiActions.setF2Value(key, summaryValues[key]));
-            }
-        }
+        // [REMOVED] The faulty for...in loop is now gone.
     }
 }

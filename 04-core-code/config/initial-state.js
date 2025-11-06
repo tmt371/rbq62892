@@ -82,10 +82,14 @@ export const initialState = {
             installFeeExcluded: false, removalFeeExcluded: false, acceSum: null,
             eAcceSum: null, surchargeFee: null, totalSumForRbTime: null,
             firstRbPrice: null, disRbPrice: null, singleprofit: null,
-            rbProfit: null, sumPrice: null,
+            rbProfit: null,
             gst: null, netProfit: null,
-            // [REMOVED] sumProfit: null,
-            newOffer: null // [NEW]
+            newOffer: null,
+
+            // [FIX] Add missing keys from Phase 2
+            f2_17_pre_sum: null,
+            sumPrice: null,
+            grandTotal: null
         },
 
         // --- Global UI State ---
