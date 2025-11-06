@@ -39,6 +39,7 @@ export const initialState = {
         dualChainInputValue: '',
         dualPrice: null,
 
+
         // --- K4 (Drive/Accessories) State ---
         driveAccessoryMode: null,
         driveRemoteCount: 0,
@@ -60,6 +61,7 @@ export const initialState = {
         summaryCordPrice: null,
         summaryAccessoriesTotal: null,
 
+
         // [RESTRUCTURED] --- F1 Financial Overview State ---
 
         f1: {
@@ -80,8 +82,10 @@ export const initialState = {
             installFeeExcluded: false, removalFeeExcluded: false, acceSum: null,
             eAcceSum: null, surchargeFee: null, totalSumForRbTime: null,
             firstRbPrice: null, disRbPrice: null, singleprofit: null,
-            rbProfit: null, sumPrice: null, sumProfit: null, gst: null, netProfit: null
-
+            rbProfit: null, sumPrice: null,
+            gst: null, netProfit: null,
+            // [REMOVED] sumProfit: null,
+            newOffer: null // [NEW]
         },
 
         // --- Global UI State ---

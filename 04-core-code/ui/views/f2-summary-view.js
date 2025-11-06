@@ -50,10 +50,13 @@ export class F2SummaryView {
             b18_discount: query('f2-b18-discount'),
             b19_disRbPrice: query('f2-b19-dis-rb-price'),
             b20_singleprofit: query('f2-b20-singleprofit'),
+            f2_17_pre_sum: query('f2-17-pre-sum'), // [NEW]
             b21_rbProfit: query('f2-b21-rb-profit'),
             b22_sumprice: query('f2-b22-sumprice'),
             b23_sumprofit: query('f2-b23-sumprofit'),
+            new_offer: query('new-offer'), // [NEW]
             b24_gst: query('f2-b24-gst'),
+            grand_total: query('grand-total'), // [NEW]
             b25_netprofit: query('f2-b25-netprofit'),
         };
     }
@@ -145,9 +148,15 @@ export class F2SummaryView {
         this.f2.b20_singleprofit.textContent = formatDecimalCurrency(f2State.singleprofit);
         this.f2.b21_rbProfit.textContent = formatDecimalCurrency(f2State.rbProfit);
         this.f2.b22_sumprice.textContent = formatDecimalCurrency(f2State.sumPrice);
-        this.f2.b23_sumprofit.textContent = formatDecimalCurrency(f2State.sumProfit);
+        this.f2.b23_sumprofit.textContent = formatDecimalCurrency(f2State.sumProfit); // [KEPT] Still rendering old value
         this.f2.b24_gst.textContent = formatDecimalCurrency(f2State.gst);
         this.f2.b25_netprofit.textContent = formatDecimalCurrency(f2State.netProfit);
+
+        // [NEW] Render new elements (with 0 or default values for now)
+        this.f2.f2_17_pre_sum.textContent = formatDecimalCurrency(0);
+        if (document.activeElement !== this.f2.new_offer) this.f2.new_offer.value = formatValue(f2State.newOffer || 0);
+        this.f2.grand_total.textContent = formatDecimalCurrency(0);
+
 
         if (document.activeElement !== this.f2.b10_wifiQty) this.f2.b10_wifiQty.value = formatValue(f2State.wifiQty);
         if (document.activeElement !== this.f2.b13_deliveryQty) this.f2.b13_deliveryQty.value = formatValue(f2State.deliveryQty);

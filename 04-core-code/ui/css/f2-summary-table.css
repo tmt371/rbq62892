@@ -78,6 +78,12 @@
     font-size: 0.85em;
 }
 
+/* [NEW] Total 標籤的紅色文字 */
+.text-red {
+    color: #c0392b;
+    /* Red */
+}
+
 /* [ADDED] Style for the total value in the header row */
 .section-header-total {
     margin-top: 8px;
@@ -90,16 +96,25 @@
 #f2-b11-e-acce-sum,
 #f2-b16-surcharge-fee,
 #f2-b22-sumprice,
-#f2-b24-gst {
+#f2-b24-gst,
+#f2-17-pre-sum {
+    /* [NEW] */
     background-color: #fffacd;
     /* Light yellow */
+}
+
+/* [NEW] new-offer 使用淡綠色 */
+#new-offer {
+    background-color: #dcfce7;
 }
 
 #f2-b20-singleprofit,
 #f2-b21-rb-profit,
 #f2-b23-sumprofit,
 #f2-b25-netprofit,
-#f2-c17-1st-rb-price {
+#f2-c17-1st-rb-price,
+#grand-total {
+    /* [NEW] */
     color: #c0392b;
     /* Red */
     background-color: #f8d7da;
