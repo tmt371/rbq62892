@@ -269,11 +269,9 @@ export class F2SummaryView {
         this.stateService.dispatch(uiActions.setF2Value('f2_17_pre_sum', summaryValues.f2_17_pre_sum));
         this.stateService.dispatch(uiActions.setF2Value('sumPrice', summaryValues.sumPrice));
 
-        // [MODIFIED] (Phase 9) Only dispatch newOffer if it's NOT null.
-        // If it is null, we let the render() function pick up sumPrice as the default.
-        if (summaryValues.newOffer !== null) {
-            this.stateService.dispatch(uiActions.setF2Value('newOffer', summaryValues.newOffer));
-        }
+        // [MODIFIED] (Phase 10) DO NOT dispatch newOffer.
+        // `newOffer` state is ONLY set by user input via `handleF2ValueChange`.
+        // We let the `render` function read `summaryValues.newOffer` if `f2State.newOffer` is null.
 
         this.stateService.dispatch(uiActions.setF2Value('gst', summaryValues.new_gst)); // Dispatch new_gst to 'gst' state
         this.stateService.dispatch(uiActions.setF2Value('grandTotal', summaryValues.grandTotal));
