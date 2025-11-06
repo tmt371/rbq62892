@@ -95,10 +95,7 @@
 #f2-b4-acce-sum,
 #f2-b11-e-acce-sum,
 #f2-b16-surcharge-fee,
-#f2-b22-sumprice,
-#f2-b24-gst,
 #f2-17-pre-sum {
-    /* [NEW] */
     background-color: #fffacd;
     /* Light yellow */
 }
@@ -108,13 +105,20 @@
     background-color: #dcfce7;
 }
 
+/* [NEW] f2-b24-gst 使用淡藍色 */
+#f2-b24-gst {
+    background-color: #e0f7fa;
+    /* Light Blue */
+}
+
 #f2-b20-singleprofit,
 #f2-b21-rb-profit,
-#f2-b23-sumprofit,
+/* [REMOVED] #f2-b23-sumprofit, */
 #f2-b25-netprofit,
 #f2-c17-1st-rb-price,
+#f2-b22-sumprice,
+/* [MOVED] */
 #grand-total {
-    /* [NEW] */
     color: #c0392b;
     /* Red */
     background-color: #f8d7da;

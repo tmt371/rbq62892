@@ -150,11 +150,7 @@
 
             <div class="grid-cell-label">Disc. %</div>
             <input type="number" class="grid-cell-input" id="f2-b18-discount" placeholder="discount" min="0" max="99">
-            <div></div>
-
-            <div class="grid-cell-label">RB Price</div>
             <div class="grid-cell-value" id="f2-b19-dis-rb-price"></div>
-            <div></div>
 
             <div class="grid-cell-label">S profit</div>
             <div class="grid-cell-value" id="f2-b20-singleprofit"></div>
@@ -164,26 +160,21 @@
             <div class="grid-cell-value" id="f2-b21-rb-profit"></div>
             <div></div>
 
-            <div class="section-header">Summary</div>
+            <div class="section-header">Selling Price</div>
             <div class="grid-cell-value section-header-total" id="f2-b22-sumprice"></div>
 
-            <div class="grid-cell-label">Sum Profit</div>
-            <div class="grid-cell-value" id="f2-b23-sumprofit"></div>
-            <div class="grid-cell-label">GST Excl.</div>
-
-            <div class="grid-cell-label">GST incl.</div>
-            <div class="grid-cell-value" id="f2-b24-gst"></div>
-            <div></div>
-
-            <div class="grid-cell-label">Gross profit</div>
-            <div class="grid-cell-value" id="f2-b25-netprofit"></div>
-            <div></div>
-
             <div class="section-header">Our Offer</div>
-            <input type="number" class="grid-cell-input" id="new-offer" value="0.00">
+            <input type="number" class="grid-cell-input" id="new-offer" value="0.00" onfocus="this.select();">
 
+            <div></div>
+            <div class="grid-cell-label" style="justify-content: flex-end; padding-right: 10px;">GST</div>
+            <div class="grid-cell-value" id="f2-b24-gst"></div>
             <div class="section-header text-red">Total</div>
             <div class="grid-cell-value section-header-total" id="grand-total">$0.00</div>
+
+            <div class="grid-cell-label">NET Profit</div>
+            <div class="grid-cell-value" id="f2-b25-netprofit"></div>
+            <div></div>
 
         </div>
     </div>

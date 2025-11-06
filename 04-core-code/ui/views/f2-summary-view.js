@@ -54,7 +54,7 @@ export class F2SummaryView {
             f2_17_pre_sum: query('f2-17-pre-sum'), // [MODIFIED]
             b21_rbProfit: query('f2-b21-rb-profit'),
             b22_sumprice: query('f2-b22-sumprice'),
-            b23_sumprofit: query('f2-b23-sumprofit'),
+            // [REMOVED] b23_sumprofit: query('f2-b23-sumprofit'),
             new_offer: query('new-offer'), // [MODIFIED]
             b24_gst: query('f2-b24-gst'),
             grand_total: query('grand-total'), // [MODIFIED]
@@ -150,7 +150,7 @@ export class F2SummaryView {
         this.f2.b20_singleprofit.textContent = formatDecimalCurrency(f2State.singleprofit);
         this.f2.b21_rbProfit.textContent = formatDecimalCurrency(f2State.rbProfit);
         this.f2.b22_sumprice.textContent = formatDecimalCurrency(f2State.sumPrice);
-        this.f2.b23_sumprofit.textContent = formatDecimalCurrency(f2State.sumProfit); // [KEPT] Still rendering old value
+        // [REMOVED] this.f2.b23_sumprofit.textContent = formatDecimalCurrency(f2State.sumProfit);
         this.f2.b25_netprofit.textContent = formatDecimalCurrency(f2State.netProfit);
 
         // [NEW] Render new elements with new values
