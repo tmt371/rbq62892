@@ -277,9 +277,11 @@ export class CalculationService {
         // [MODIFIED] (Phase 2) New calculations based on `newOffer`
         const newOffer = (f2State.newOffer !== null && f2State.newOffer !== undefined) ? f2State.newOffer : sumPrice;
 
-        // [MODIFIED] (Phase 2) Calculate new_gst based on gstExcluded flag
-        const new_gst = f2State.gstExcluded ? 0 : (newOffer * 0.1);
-        const grandTotal = newOffer + new_gst; // New `grandTotal`
+        // [MODIFIED] (Phase 11) Calculate *both* potential and actual GST
+        const potential_gst = newOffer * 0.1; // The value to display
+        const actual_gst = f2State.gstExcluded ? 0 : potential_gst; // The value to use in calculations
+
+        const grandTotal = newOffer + actual_gst; // [MODIFIED] Uses actual_gst
 
         const netProfit = grandTotal - f1_final_total; // `netProfit` is now based on `grandTotal`
 
@@ -304,7 +306,7 @@ export class CalculationService {
             // --- New values (for Phase 2+) ---
             f2_17_pre_sum: f2_17_pre_sum,
             newOffer: newOffer,
-            new_gst: new_gst,
+            new_gst: potential_gst, // [MODIFIED] Always return the potential_gst for display
             grandTotal: grandTotal,
             netProfit: netProfit, // (new value for f2-b25)
 
@@ -326,9 +328,9 @@ export class CalculationService {
         // [MODIFIED] (Phase 4) Grand total is now derived from F2's newOffer state, not F3.
         const newOfferValue = (ui.f2.newOffer !== null && ui.f2.newOffer !== undefined) ? ui.f2.newOffer : summaryData.sumPrice;
 
-        // [MODIFIED] (Phase 2) Use new_gst and grandTotal from summaryData
+        // [MODIFIED] (Phase 11) Use new_gst (potential) and grandTotal (calculated) from summaryData
         const gstValue = summaryData.new_gst;
-        const grandTotal = summaryData.grandTotal;
+        const grandTotal = summaryData.grandTotal; // This value is already correct (newOffer + actual_gst)
 
         const items = quoteData.products.rollerBlind.items;
         const formatPrice = (price) => (typeof price === 'number' && price > 0) ? `$${price.toFixed(2)}` : '';
