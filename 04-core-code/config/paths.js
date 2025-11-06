@@ -3,7 +3,8 @@ export const paths = {
         leftPanel: './04-core-code/ui/partials/left-panel.html',
         rightPanel: './04-core-code/ui/partials/right-panel.html',
         quoteTemplate: './04-core-code/ui/partials/quote-template-final.html', // [NEW]
-        detailedItemList: './04-core-code/ui/partials/detailed-item-list-final.html' // [NEW]
+        detailedItemList: './04-core-code/ui/partials/detailed-item-list-final.html', // [NEW]
+        gmailSimple: './04-core-code/ui/partials/gmail-template-simple.html' // [NEW]
     },
     // [NEW] Add paths for new refactored tabs
     tabs: {
