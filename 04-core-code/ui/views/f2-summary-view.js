@@ -14,10 +14,11 @@ export class F2SummaryView {
         this.stateService = stateService;
         this.calculationService = calculationService;
 
+        // [MODIFIED] (Phase 12) Move install-qty to the front of the sequence
         this.f2InputSequence = [
-            'f2-b10-wifi-qty', 'f2-b13-delivery-qty', 'f2-b14-install-qty',
+            'f2-b14-install-qty', 'f2-b10-wifi-qty', 'f2-b13-delivery-qty',
             'f2-b15-removal-qty', 'f2-b17-mul-times', 'f2-b18-discount',
-            'new-offer' // [NEW] Add new-offer to the sequence
+            'new-offer'
         ];
 
         this._cacheF2Elements();
@@ -153,7 +154,7 @@ export class F2SummaryView {
         this.f2.b16_surchargeFee.textContent = formatIntegerCurrency(surchargeFee);
 
         this.f2.a17_totalSum.textContent = formatValue(f2State.totalSumForRbTime);
-        this.f2.c17_1stRbPrice.textContent = formatDecimalCurrency(f2State.firstRbPrice);
+        this.f2.c17_1st_rb_price.textContent = formatDecimalCurrency(f2State.firstRbPrice);
         this.f2.b19_disRbPrice.textContent = formatDecimalCurrency(f2State.disRbPrice);
         this.f2.b20_singleprofit.textContent = formatDecimalCurrency(f2State.singleprofit);
         this.f2.b21_rbProfit.textContent = formatDecimalCurrency(f2State.rbProfit);
@@ -191,13 +192,26 @@ export class F2SummaryView {
 
     activate() {
         // [REFACTORED] The view is now responsible for ensuring its data is fresh upon activation.
-        const { quoteData } = this.stateService.getState();
+        const { quoteData, ui } = this.stateService.getState();
         const productStrategy = this.calculationService.productFactory.getProductStrategy(quoteData.currentProduct);
         const { updatedQuoteData } = this.calculationService.calculateAndSum(quoteData, productStrategy);
 
         this.stateService.dispatch(quoteActions.setQuoteData(updatedQuoteData));
+
+        // [NEW] (Phase 12) Auto-populate install Qty if it's null
+        if (ui.f2.installQty === null) {
+            // We use updatedQuoteData.products... to get the most current item list
+            const items = updatedQuoteData.products[updatedQuoteData.currentProduct].items;
+            const defaultInstallQty = items.length > 0 ? items.length - 1 : 0;
+            if (defaultInstallQty >= 0) {
+                this.stateService.dispatch(uiActions.setF2Value('installQty', defaultInstallQty));
+            }
+        }
+
         this._calculateF2Summary();
-        this.eventAggregator.publish(EVENTS.FOCUS_ELEMENT, { elementId: 'f2-b10-wifi-qty' });
+
+        // [MODIFIED] (Phase 12) Change focus to install Qty
+        this.eventAggregator.publish(EVENTS.FOCUS_ELEMENT, { elementId: 'f2-b14-install-qty' });
     }
 
     // --- [NEW] Methods migrated from WorkflowService ---
