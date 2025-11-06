@@ -89,7 +89,9 @@ export const initialState = {
             // [FIX] Add missing keys from Phase 2
             f2_17_pre_sum: null,
             sumPrice: null,
-            grandTotal: null
+            grandTotal: null,
+
+            gstExcluded: false // [NEW] (Phase 2)
         },
 
         // --- Global UI State ---

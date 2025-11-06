@@ -105,10 +105,20 @@
     background-color: #dcfce7;
 }
 
-/* [NEW] f2-b24-gst 使用淡藍色 */
+/* [NEW] (Phase 2) f2-b24-gst 使用淡藍色 */
 #f2-b24-gst {
     background-color: #e0f7fa;
     /* Light Blue */
+}
+
+/* [NEW] (Phase 2) GST label styles */
+#f2-label-gst {
+    background-color: #e0f7fa;
+    /* Light Blue */
+    border-radius: 3px;
+    padding: 4px 10px 4px 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
 
 #f2-b20-singleprofit,
@@ -134,6 +144,15 @@
 }
 
 .is-excluded {
+    background-color: #f8d7da !important;
+    /* Light pink */
+    text-decoration: line-through;
+    color: #721c24;
+}
+
+/* [NEW] (Phase 2) Add exclusion style for GST */
+#f2-label-gst.is-excluded,
+#f2-b24-gst.is-excluded {
     background-color: #f8d7da !important;
     /* Light pink */
     text-decoration: line-through;

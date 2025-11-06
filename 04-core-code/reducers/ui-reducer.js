@@ -4,7 +4,7 @@ import { initialState } from '../config/initial-state.js';
 
 export function uiReducer(state, action) {
     switch (action.type) {
-        
+
         case UI_ACTION_TYPES.SET_CURRENT_VIEW:
             return { ...state, currentView: action.payload.viewName };
         case UI_ACTION_TYPES.SET_VISIBLE_COLUMNS:
@@ -88,7 +88,7 @@ export function uiReducer(state, action) {
         case UI_ACTION_TYPES.SET_DRIVE_ACCESSORY_TOTAL_PRICE: {
             const { accessory, price } = action.payload;
             const newUi = { ...state };
-            switch(accessory) {
+            switch (accessory) {
                 case 'winder': newUi.driveWinderTotalPrice = price; break;
                 case 'motor': newUi.driveMotorTotalPrice = price; break;
                 case 'remote': newUi.driveRemoteTotalPrice = price; break;
@@ -135,6 +135,10 @@ export function uiReducer(state, action) {
             }
             return state;
         }
+        // [NEW] (Phase 2)
+        case UI_ACTION_TYPES.TOGGLE_GST_EXCLUSION: {
+            return { ...state, f2: { ...state.f2, gstExcluded: !state.f2.gstExcluded } };
+        }
         case UI_ACTION_TYPES.SET_SUM_OUTDATED:
             return { ...state, isSumOutdated: action.payload.isOutdated };
         case UI_ACTION_TYPES.RESET_UI:
@@ -143,7 +147,7 @@ export function uiReducer(state, action) {
         // [NEW v6285 Phase 4] Restore F1 state from snapshot
         case UI_ACTION_TYPES.RESTORE_F1_SNAPSHOT: {
             const snapshot = action.payload;
-            
+
             const newF1State = { ...state.f1 };
 
             // Restore financial/distribution values to ui.f1

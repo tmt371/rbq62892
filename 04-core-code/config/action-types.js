@@ -60,6 +60,7 @@ export const UI_ACTION_TYPES = {
     // F2 Financial Summary State
     SET_F2_VALUE: 'ui/setF2Value',
     TOGGLE_F2_FEE_EXCLUSION: 'ui/toggleF2FeeExclusion',
+    TOGGLE_GST_EXCLUSION: 'ui/toggleGstExclusion', // [NEW] (Phase 2)
 
     // Global UI State
     SET_SUM_OUTDATED: 'ui/setSumOutdated',

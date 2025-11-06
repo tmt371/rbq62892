@@ -197,6 +197,11 @@ export const toggleF2FeeExclusion = (feeType) => ({
     payload: { feeType },
 });
 
+// [NEW] (Phase 2)
+export const toggleGstExclusion = () => ({
+    type: UI_ACTION_TYPES.TOGGLE_GST_EXCLUSION,
+});
+
 // --- Global UI State ---
 export const setSumOutdated = (isOutdated) => ({
     type: UI_ACTION_TYPES.SET_SUM_OUTDATED,

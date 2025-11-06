@@ -56,6 +56,7 @@ export class F2SummaryView {
             b22_sumprice: query('f2-b22-sumprice'),
             // [REMOVED] b23_sumprofit: query('f2-b23-sumprofit'),
             new_offer: query('new-offer'), // [MODIFIED]
+            label_gst: query('f2-label-gst'), // [NEW] (Phase 2)
             b24_gst: query('f2-b24-gst'),
             grand_total: query('grand-total'), // [MODIFIED]
             b25_netprofit: query('f2-b25-netprofit'),
@@ -97,6 +98,13 @@ export class F2SummaryView {
                 });
             }
         });
+
+        // [NEW] (Phase 2) Add listener for GST toggle
+        if (this.f2.label_gst) {
+            this.f2.label_gst.addEventListener('click', () => {
+                this.handleToggleGstExclusion();
+            });
+        }
     }
 
     render(state) {
@@ -165,13 +173,20 @@ export class F2SummaryView {
         if (document.activeElement !== this.f2.b17_mulTimes) this.f2.b17_mulTimes.value = formatValue(f2State.mulTimes);
         if (document.activeElement !== this.f2.b18_discount) this.f2.b18_discount.value = formatValue(f2State.discount);
 
-        // [MODIFIED] (Phase 8) Render new_offer input using its correct state key
-        if (document.activeElement !== this.f2.new_offer) this.f2.new_offer.value = formatValue(f2State.newOffer);
+        // [MODIFIED] (Phase 9) `newOffer` input now defaults to `sumPrice` if null
+        if (document.activeElement !== this.f2.new_offer) {
+            const newOfferValue = (f2State.newOffer !== null && f2State.newOffer !== undefined) ? f2State.newOffer : f2State.sumPrice;
+            this.f2.new_offer.value = formatValue(newOfferValue);
+        }
 
 
         this.f2.c13_deliveryFee.classList.toggle('is-excluded', f2State.deliveryFeeExcluded);
         this.f2.c14_installFee.classList.toggle('is-excluded', f2State.installFeeExcluded);
         this.f2.c15_removalFee.classList.toggle('is-excluded', f2State.removalFeeExcluded);
+
+        // [NEW] (Phase 2) Toggle GST exclusion styles
+        if (this.f2.label_gst) this.f2.label_gst.classList.toggle('is-excluded', f2State.gstExcluded);
+        if (this.f2.b24_gst) this.f2.b24_gst.classList.toggle('is-excluded', f2State.gstExcluded);
     }
 
     activate() {
@@ -188,6 +203,12 @@ export class F2SummaryView {
     // --- [NEW] Methods migrated from WorkflowService ---
     handleToggleFeeExclusion({ feeType }) {
         this.stateService.dispatch(uiActions.toggleF2FeeExclusion(feeType));
+        this._calculateF2Summary();
+    }
+
+    // [NEW] (Phase 2)
+    handleToggleGstExclusion() {
+        this.stateService.dispatch(uiActions.toggleGstExclusion());
         this._calculateF2Summary();
     }
 
@@ -247,7 +268,13 @@ export class F2SummaryView {
         // New (Phase 2+) values
         this.stateService.dispatch(uiActions.setF2Value('f2_17_pre_sum', summaryValues.f2_17_pre_sum));
         this.stateService.dispatch(uiActions.setF2Value('sumPrice', summaryValues.sumPrice));
-        this.stateService.dispatch(uiActions.setF2Value('newOffer', summaryValues.newOffer));
+
+        // [MODIFIED] (Phase 9) Only dispatch newOffer if it's NOT null.
+        // If it is null, we let the render() function pick up sumPrice as the default.
+        if (summaryValues.newOffer !== null) {
+            this.stateService.dispatch(uiActions.setF2Value('newOffer', summaryValues.newOffer));
+        }
+
         this.stateService.dispatch(uiActions.setF2Value('gst', summaryValues.new_gst)); // Dispatch new_gst to 'gst' state
         this.stateService.dispatch(uiActions.setF2Value('grandTotal', summaryValues.grandTotal));
         this.stateService.dispatch(uiActions.setF2Value('netProfit', summaryValues.netProfit));

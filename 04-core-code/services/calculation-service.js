@@ -271,13 +271,16 @@ export class CalculationService {
         const singleprofit = validItemCount > 0 ? rbProfit / validItemCount : 0;
 
         // [MODIFIED] (Phase 2) Keep old calculations for compatibility
-        const sumProfit = sumPrice - f1SubTotal; // Old `sumProfit`
+        const sumProfit = sumPrice - f1SubTotal; // Old `sumProfit` (REMOVED IN PHASE 3)
         const old_gst = sumPrice * 1.1; // Old `gst` (GST-inclusive total) for getQuoteTemplateData
 
         // [MODIFIED] (Phase 2) New calculations based on `newOffer`
         const newOffer = (f2State.newOffer !== null && f2State.newOffer !== undefined) ? f2State.newOffer : sumPrice;
-        const new_gst = newOffer * 0.1; // New `gst` (10% amount)
+
+        // [MODIFIED] (Phase 2) Calculate new_gst based on gstExcluded flag
+        const new_gst = f2State.gstExcluded ? 0 : (newOffer * 0.1);
         const grandTotal = newOffer + new_gst; // New `grandTotal`
+
         const netProfit = grandTotal - f1_final_total; // `netProfit` is now based on `grandTotal`
 
         return {
@@ -295,8 +298,8 @@ export class CalculationService {
             singleprofit,
 
             // --- Old values (for compatibility + render) ---
-            sumProfit: sumProfit, // (for f2-b23)
-            gst: old_gst, // (for getQuoteTemplateData)
+            sumProfit: sumProfit, // (for f2-b23 - will be removed in Phase 3)
+            gst: old_gst, // (for getQuoteTemplateData compatibility - will be removed in Phase 4)
 
             // --- New values (for Phase 2+) ---
             f2_17_pre_sum: f2_17_pre_sum,
@@ -322,8 +325,10 @@ export class CalculationService {
 
         // [MODIFIED] (Phase 4) Grand total is now derived from F2's newOffer state, not F3.
         const newOfferValue = (ui.f2.newOffer !== null && ui.f2.newOffer !== undefined) ? ui.f2.newOffer : summaryData.sumPrice;
-        const gstValue = newOfferValue * 0.1;
-        const grandTotal = newOfferValue + gstValue; // This is the final, GST-inclusive total.
+
+        // [MODIFIED] (Phase 2) Use new_gst and grandTotal from summaryData
+        const gstValue = summaryData.new_gst;
+        const grandTotal = summaryData.grandTotal;
 
         const items = quoteData.products.rollerBlind.items;
         const formatPrice = (price) => (typeof price === 'number' && price > 0) ? `$${price.toFixed(2)}` : '';
