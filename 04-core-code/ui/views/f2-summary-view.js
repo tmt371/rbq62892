@@ -109,7 +109,8 @@ export class F2SummaryView {
     }
 
     render(state) {
-        if (!state || !state.ui.f2 || !this.f2.b2_winderPrice) return;
+        // [FIX] (Phase 13) Strengthen guard clause
+        if (!this.f2 || !state || !state.ui.f2) return;
 
         const f2State = state.ui.f2;
         const productSummary = state.quoteData.products[state.quoteData.currentProduct]?.summary;
@@ -154,7 +155,7 @@ export class F2SummaryView {
         this.f2.b16_surchargeFee.textContent = formatIntegerCurrency(surchargeFee);
 
         this.f2.a17_totalSum.textContent = formatValue(f2State.totalSumForRbTime);
-        this.f2.c17_1st_rb_price.textContent = formatDecimalCurrency(f2State.firstRbPrice);
+        this.f2.c17_1stRbPrice.textContent = formatDecimalCurrency(f2State.firstRbPrice);
         this.f2.b19_disRbPrice.textContent = formatDecimalCurrency(f2State.disRbPrice);
         this.f2.b20_singleprofit.textContent = formatDecimalCurrency(f2State.singleprofit);
         this.f2.b21_rbProfit.textContent = formatDecimalCurrency(f2State.rbProfit);
