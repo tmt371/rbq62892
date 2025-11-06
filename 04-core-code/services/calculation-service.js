@@ -77,7 +77,6 @@ export class CalculationService {
                 [currentProductKey]: newProductData
             }
         };
-
         return { updatedQuoteData, firstError };
     }
 
@@ -232,7 +231,9 @@ export class CalculationService {
         const disRbPriceValue = firstRbPrice * (1 - (discount / 100));
         const disRbPrice = Math.round(disRbPriceValue * 100) / 100;
 
-        const sumPrice = acceSum + eAcceSum + surchargeFee + disRbPrice;
+        // [MODIFIED] (Phase 2) New calculation logic
+        const f2_17_pre_sum = acceSum + eAcceSum + surchargeFee;
+        const sumPrice = disRbPrice + f2_17_pre_sum; // This is the new f2-b22-sumprice
 
         // --- Start: Replicate F1 Final Total Calculation ---
         const winderQtyF1 = items.filter(item => item.winder === 'HD').length;
@@ -269,9 +270,15 @@ export class CalculationService {
         const validItemCount = items.filter(item => typeof item.linePrice === 'number' && item.linePrice > 0).length;
         const singleprofit = validItemCount > 0 ? rbProfit / validItemCount : 0;
 
-        const sumProfit = sumPrice - f1SubTotal;
-        const gst = sumPrice * 1.1; // Correctly calculate the total including GST
-        const netProfit = gst - f1_final_total;
+        // [MODIFIED] (Phase 2) Keep old calculations for compatibility
+        const sumProfit = sumPrice - f1SubTotal; // Old `sumProfit`
+        const old_gst = sumPrice * 1.1; // Old `gst` (GST-inclusive total) for getQuoteTemplateData
+
+        // [MODIFIED] (Phase 2) New calculations based on `newOffer`
+        const newOffer = (f2State.newOffer !== null && f2State.newOffer !== undefined) ? f2State.newOffer : sumPrice;
+        const new_gst = newOffer * 0.1; // New `gst` (10% amount)
+        const grandTotal = newOffer + new_gst; // New `grandTotal`
+        const netProfit = grandTotal - f1_final_total; // `netProfit` is now based on `grandTotal`
 
         return {
             totalSumForRbTime: totalSumFromQuickQuote,
@@ -283,12 +290,21 @@ export class CalculationService {
             eAcceSum,
             firstRbPrice,
             disRbPrice,
-            sumPrice,
+            sumPrice, // (new value for f2-b22)
             rbProfit,
             singleprofit,
-            sumProfit,
-            gst,
-            netProfit,
+
+            // --- Old values (for compatibility + render) ---
+            sumProfit: sumProfit, // (for f2-b23)
+            gst: old_gst, // (for getQuoteTemplateData)
+
+            // --- New values (for Phase 2+) ---
+            f2_17_pre_sum: f2_17_pre_sum,
+            newOffer: newOffer,
+            new_gst: new_gst,
+            grandTotal: grandTotal,
+            netProfit: netProfit, // (new value for f2-b25)
+
             mulTimes // [FIX] Add mulTimes to the return object so its value can be persisted.
         };
     }
@@ -303,6 +319,8 @@ export class CalculationService {
      */
     getQuoteTemplateData(quoteData, ui, f3Data) {
         const summaryData = this.calculateF2Summary(quoteData, ui);
+        // [MODIFIED] (Phase 2) This line MUST still use `summaryData.gst` (the old GST-inclusive total)
+        // This will be changed in Phase 4.
         const grandTotal = parseFloat(f3Data.finalOfferPrice) || summaryData.gst || 0;
         const items = quoteData.products.rollerBlind.items;
         const formatPrice = (price) => (typeof price === 'number' && price > 0) ? `$${price.toFixed(2)}` : '';
@@ -346,11 +364,11 @@ export class CalculationService {
             savings: `$${((summaryData.firstRbPrice || 0) - (summaryData.disRbPrice || 0)).toFixed(2)}`,
             generalNotes: (f3Data.generalNotes || '').replace(/\n/g, '<br>'),
             termsAndConditions: (f3Data.termsConditions || 'Standard terms and conditions apply.').replace(/\n/g, '<br>'),
-            
+
             // Data for the detailed list (Appendix)
             items: items,
             mulTimes: summaryData.mulTimes || 1,
-            
+
             // Data for the accessories table (Appendix)
             motorQty: motorQty || '',
             motorPrice: formatPrice(motorPrice),

@@ -16,7 +16,8 @@ export class F2SummaryView {
 
         this.f2InputSequence = [
             'f2-b10-wifi-qty', 'f2-b13-delivery-qty', 'f2-b14-install-qty',
-            'f2-b15-removal-qty', 'f2-b17-mul-times', 'f2-b18-discount'
+            'f2-b15-removal-qty', 'f2-b17-mul-times', 'f2-b18-discount',
+            'new-offer' // [NEW] Add new-offer to the sequence
         ];
 
         this._cacheF2Elements();
@@ -50,13 +51,13 @@ export class F2SummaryView {
             b18_discount: query('f2-b18-discount'),
             b19_disRbPrice: query('f2-b19-dis-rb-price'),
             b20_singleprofit: query('f2-b20-singleprofit'),
-            f2_17_pre_sum: query('f2-17-pre-sum'), // [NEW]
+            f2_17_pre_sum: query('f2-17-pre-sum'), // [MODIFIED]
             b21_rbProfit: query('f2-b21-rb-profit'),
             b22_sumprice: query('f2-b22-sumprice'),
             b23_sumprofit: query('f2-b23-sumprofit'),
-            new_offer: query('new-offer'), // [NEW]
+            new_offer: query('new-offer'), // [MODIFIED]
             b24_gst: query('f2-b24-gst'),
-            grand_total: query('grand-total'), // [NEW]
+            grand_total: query('grand-total'), // [MODIFIED]
             b25_netprofit: query('f2-b25-netprofit'),
         };
     }
@@ -79,7 +80,8 @@ export class F2SummaryView {
 
         const f2Inputs = [
             this.f2.b10_wifiQty, this.f2.b13_deliveryQty, this.f2.b14_installQty,
-            this.f2.b15_removalQty, this.f2.b17_mulTimes, this.f2.b18_discount
+            this.f2.b15_removalQty, this.f2.b17_mulTimes, this.f2.b18_discount,
+            this.f2.new_offer // [NEW] Add listener for new-offer
         ];
         f2Inputs.forEach(input => setupF2InputListener(input));
 
@@ -149,21 +151,23 @@ export class F2SummaryView {
         this.f2.b21_rbProfit.textContent = formatDecimalCurrency(f2State.rbProfit);
         this.f2.b22_sumprice.textContent = formatDecimalCurrency(f2State.sumPrice);
         this.f2.b23_sumprofit.textContent = formatDecimalCurrency(f2State.sumProfit); // [KEPT] Still rendering old value
-        this.f2.b24_gst.textContent = formatDecimalCurrency(f2State.gst);
         this.f2.b25_netprofit.textContent = formatDecimalCurrency(f2State.netProfit);
 
-        // [NEW] Render new elements (with 0 or default values for now)
-        this.f2.f2_17_pre_sum.textContent = formatDecimalCurrency(0);
-        if (document.activeElement !== this.f2.new_offer) this.f2.new_offer.value = formatValue(f2State.newOffer || 0);
-        this.f2.grand_total.textContent = formatDecimalCurrency(0);
+        // [NEW] Render new elements with new values
+        this.f2.f2_17_pre_sum.textContent = formatDecimalCurrency(f2State.f2_17_pre_sum);
+        this.f2.b24_gst.textContent = formatDecimalCurrency(f2State.gst); // Now shows new_gst
+        this.f2.grand_total.textContent = formatDecimalCurrency(f2State.grandTotal);
 
-
+        // --- Render Inputs ---
         if (document.activeElement !== this.f2.b10_wifiQty) this.f2.b10_wifiQty.value = formatValue(f2State.wifiQty);
         if (document.activeElement !== this.f2.b13_deliveryQty) this.f2.b13_deliveryQty.value = formatValue(f2State.deliveryQty);
         if (document.activeElement !== this.f2.b14_installQty) this.f2.b14_installQty.value = formatValue(f2State.installQty);
         if (document.activeElement !== this.f2.b15_removalQty) this.f2.b15_removalQty.value = formatValue(f2State.removalQty);
         if (document.activeElement !== this.f2.b17_mulTimes) this.f2.b17_mulTimes.value = formatValue(f2State.mulTimes);
         if (document.activeElement !== this.f2.b18_discount) this.f2.b18_discount.value = formatValue(f2State.discount);
+        // [NEW] Render new_offer input
+        if (document.activeElement !== this.f2.new_offer) this.f2.new_offer.value = formatValue(f2State.newOffer);
+
 
         this.f2.c13_deliveryFee.classList.toggle('is-excluded', f2State.deliveryFeeExcluded);
         this.f2.c14_installFee.classList.toggle('is-excluded', f2State.installFeeExcluded);
@@ -198,6 +202,7 @@ export class F2SummaryView {
             case 'f2-b15-removal-qty': keyToUpdate = 'removalQty'; break;
             case 'f2-b17-mul-times': keyToUpdate = 'mulTimes'; break;
             case 'f2-b18-discount': keyToUpdate = 'discount'; break;
+            case 'new-offer': keyToUpdate = 'newOffer'; break; // [NEW]
         }
 
         if (keyToUpdate) {
@@ -220,8 +225,20 @@ export class F2SummaryView {
     _calculateF2Summary() {
         const { quoteData, ui } = this.stateService.getState();
         const summaryValues = this.calculationService.calculateF2Summary(quoteData, ui);
+
+        // [MODIFIED] (Phase 2) Dispatch new values to state
+        this.stateService.dispatch(uiActions.setF2Value('f2_17_pre_sum', summaryValues.f2_17_pre_sum));
+        this.stateService.dispatch(uiActions.setF2Value('sumPrice', summaryValues.sumPrice));
+        this.stateService.dispatch(uiActions.setF2Value('newOffer', summaryValues.newOffer));
+        this.stateService.dispatch(uiActions.setF2Value('gst', summaryValues.new_gst)); // Dispatch new_gst to 'gst' state
+        this.stateService.dispatch(uiActions.setF2Value('grandTotal', summaryValues.grandTotal));
+        this.stateService.dispatch(uiActions.setF2Value('netProfit', summaryValues.netProfit));
+
+        // Dispatch remaining (old + compatible) values
         for (const key in summaryValues) {
-            this.stateService.dispatch(uiActions.setF2Value(key, summaryValues[key]));
+            if (!['f2_17_pre_sum', 'sumPrice', 'newOffer', 'new_gst', 'grandTotal', 'netProfit'].includes(key)) {
+                this.stateService.dispatch(uiActions.setF2Value(key, summaryValues[key]));
+            }
         }
     }
 }
