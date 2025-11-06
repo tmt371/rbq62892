@@ -150,7 +150,7 @@ export class F2SummaryView {
         this.f2.b20_singleprofit.textContent = formatDecimalCurrency(f2State.singleprofit);
         this.f2.b21_rbProfit.textContent = formatDecimalCurrency(f2State.rbProfit);
         this.f2.b22_sumprice.textContent = formatDecimalCurrency(f2State.sumPrice);
-        // [REMOVED] this.f2.b23_sumprofit.textContent = formatDecimalCurrency(f2State.sumProfit);
+        // [REMOVED] Rendering for b23_sumprofit removed
         this.f2.b25_netprofit.textContent = formatDecimalCurrency(f2State.netProfit);
 
         // [NEW] Render new elements with new values
@@ -234,9 +234,12 @@ export class F2SummaryView {
         this.stateService.dispatch(uiActions.setF2Value('grandTotal', summaryValues.grandTotal));
         this.stateService.dispatch(uiActions.setF2Value('netProfit', summaryValues.netProfit));
 
+        // [MODIFIED] (Phase 7) Add 'gst' and 'netProfit' to the exclusion list
+        const exclusionList = ['f2_17_pre_sum', 'sumPrice', 'newOffer', 'new_gst', 'grandTotal', 'netProfit', 'gst', 'netProfit'];
+
         // Dispatch remaining (old + compatible) values
         for (const key in summaryValues) {
-            if (!['f2_17_pre_sum', 'sumPrice', 'newOffer', 'new_gst', 'grandTotal', 'netProfit'].includes(key)) {
+            if (!exclusionList.includes(key)) {
                 this.stateService.dispatch(uiActions.setF2Value(key, summaryValues[key]));
             }
         }
