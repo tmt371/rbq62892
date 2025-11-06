@@ -27,7 +27,7 @@ export class F3QuotePrepView {
                 customerAddress: query('#f3-customer-address'),
                 customerPhone: query('#f3-customer-phone'),
                 customerEmail: query('#f3-customer-email'),
-                finalOfferPrice: query('#f3-final-offer-price'),
+                // [REMOVED] finalOfferPrice: query('#f3-final-offer-price'),
                 generalNotes: query('#f3-general-notes'),
                 termsConditions: query('#f3-terms-conditions'),
             },
@@ -77,7 +77,7 @@ export class F3QuotePrepView {
         // --- Focus Jumping Logic ---
         const focusOrder = [
             'quoteId', 'issueDate', 'dueDate', 'customerName', 'customerAddress',
-            'customerPhone', 'customerEmail', 'finalOfferPrice', 'generalNotes', 'termsConditions'
+            'customerPhone', 'customerEmail', /* [REMOVED] 'finalOfferPrice', */ 'generalNotes', 'termsConditions'
         ];
 
         focusOrder.forEach((key, index) => {

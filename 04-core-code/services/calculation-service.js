@@ -319,9 +319,12 @@ export class CalculationService {
      */
     getQuoteTemplateData(quoteData, ui, f3Data) {
         const summaryData = this.calculateF2Summary(quoteData, ui);
-        // [MODIFIED] (Phase 2) This line MUST still use `summaryData.gst` (the old GST-inclusive total)
-        // This will be changed in Phase 4.
-        const grandTotal = parseFloat(f3Data.finalOfferPrice) || summaryData.gst || 0;
+
+        // [MODIFIED] (Phase 4) Grand total is now derived from F2's newOffer state, not F3.
+        const newOfferValue = (ui.f2.newOffer !== null && ui.f2.newOffer !== undefined) ? ui.f2.newOffer : summaryData.sumPrice;
+        const gstValue = newOfferValue * 0.1;
+        const grandTotal = newOfferValue + gstValue; // This is the final, GST-inclusive total.
+
         const items = quoteData.products.rollerBlind.items;
         const formatPrice = (price) => (typeof price === 'number' && price > 0) ? `$${price.toFixed(2)}` : '';
 
@@ -356,11 +359,14 @@ export class CalculationService {
             customerAddress: f3Data.customerAddress, // [NEW]
             customerPhone: f3Data.customerPhone, // [NEW]
             customerEmail: f3Data.customerEmail, // [NEW]
+
+            // [MODIFIED] (Phase 4) All totals are now based on the new grandTotal
             subtotal: `$${(summaryData.sumPrice || 0).toFixed(2)}`,
-            gst: `$${(grandTotal / 1.1 * 0.1).toFixed(2)}`,
+            gst: `$${gstValue.toFixed(2)}`,
             grandTotal: `$${grandTotal.toFixed(2)}`,
             deposit: `$${(grandTotal * 0.5).toFixed(2)}`,
             balance: `$${(grandTotal * 0.5).toFixed(2)}`,
+
             savings: `$${((summaryData.firstRbPrice || 0) - (summaryData.disRbPrice || 0)).toFixed(2)}`,
             generalNotes: (f3Data.generalNotes || '').replace(/\n/g, '<br>'),
             termsAndConditions: (f3Data.termsConditions || 'Standard terms and conditions apply.').replace(/\n/g, '<br>'),

@@ -31,10 +31,11 @@ export class WorkflowService {
     async handlePrintableQuoteRequest() {
         try {
 
-            const { quoteData, ui } = this.stateService.getState();
+            const { quoteData, ui } = this.stateService.getState(); // [MODIFIED] (Phase 4) Get ui state
             const f3Data = this._getF3OverrideData();
 
             // [REFACTORED] Delegate the entire HTML generation process to the new service.
+            // [MODIFIED] (Phase 4) Pass ui state to the generator
             const finalHtml = this.quoteGeneratorService.generateQuoteHtml(quoteData, ui, f3Data);
 
             if (finalHtml) {
@@ -61,10 +62,11 @@ export class WorkflowService {
     // [NEW] (Phase 4, Step 2)
     async handleGmailQuoteRequest() {
         try {
-            const { quoteData, ui } = this.stateService.getState();
+            const { quoteData, ui } = this.stateService.getState(); // [MODIFIED] (Phase 4) Get ui state
             const f3Data = this._getF3OverrideData();
 
             // Call the new service method for the GTH template
+            // [MODIFIED] (Phase 4) Pass ui state to the generator
             const finalHtml = this.quoteGeneratorService.generateGmailQuoteHtml(quoteData, ui, f3Data);
 
             if (finalHtml) {
@@ -96,7 +98,7 @@ export class WorkflowService {
             customerAddress: getValue('f3-customer-address'),
             customerPhone: getValue('f3-customer-phone'),
             customerEmail: getValue('f3-customer-email'),
-            finalOfferPrice: getValue('f3-final-offer-price'),
+            // [REMOVED] (Phase 4) finalOfferPrice: getValue('f3-final-offer-price'),
             // [MODIFIED] Add the missing generalNotes field to be collected
             generalNotes: getValue('f3-general-notes'),
             termsConditions: getValue('f3-terms-conditions'),
